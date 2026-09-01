@@ -688,7 +688,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ transactions, userEmail })
         </div>
       </div>
 
-      {/* Seção Rateio e Utilidades */}
+      {/* Seção Rateio e Contas Fixas */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         
         {/* Custo por Casa (Rateio) */}
@@ -734,7 +734,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ transactions, userEmail })
              <div className="p-1.5 bg-amber-50 rounded-lg">
                 <Zap className="w-4 h-4 text-amber-500" />
              </div>
-             <h3 className="text-lg font-semibold text-slate-800 ml-2">Utilidades (Água vs Luz)</h3>
+             <h3 className="text-lg font-semibold text-slate-800 ml-2">Contas Fixas (Água vs Luz)</h3>
           </div>
 
           <div className="flex flex-col md:flex-row items-center">

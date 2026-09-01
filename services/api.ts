@@ -11,20 +11,80 @@ import {
   CondoSettings
 } from '../types';
 
-// Seed data para inicialização garantida e demonstração instantânea
+// Seed data para inicialização garantida e demonstração instantânea (com histórico completo de 2025 e 2026)
 const INITIAL_TRANSACTIONS: Transaction[] = [
+  // 2026 - Março
   { id: 1, date: '2026-03-01', type: 'income', desc: 'Cota Condominial - Casa 101 (Março/2026)', amount: 450.00, category: 'Taxa Condominial', attachments: [] },
   { id: 2, date: '2026-03-01', type: 'income', desc: 'Cota Condominial - Casa 102 (Março/2026)', amount: 450.00, category: 'Taxa Condominial', attachments: [] },
   { id: 3, date: '2026-03-01', type: 'income', desc: 'Cota Condominial - Casa 103 (Março/2026)', amount: 450.00, category: 'Taxa Condominial', attachments: [] },
-  { id: 4, date: '2026-03-02', type: 'income', desc: 'Fundo de Reserva - Rateio 03 Casas', amount: 150.00, category: 'Fundo de Reserva', attachments: [] },
-  { id: 5, date: '2026-03-05', type: 'expense', desc: 'Conta de Energia Elétrica (Áreas Comuns/Portão)', amount: 185.40, category: 'Utilidades', attachments: [] },
-  { id: 6, date: '2026-03-08', type: 'expense', desc: 'Conta de Água e Esgoto (Corsan/Sabesp)', amount: 320.60, category: 'Utilidades', attachments: [] },
+  { id: 4, date: '2026-03-02', type: 'income', desc: 'Fundo de Reserva - Rateio 03 Casas (Março/2026)', amount: 150.00, category: 'Fundo de Reserva', attachments: [] },
+  { id: 5, date: '2026-03-05', type: 'expense', desc: 'Conta de Energia Elétrica (Áreas Comuns/Portão)', amount: 185.40, category: 'Contas Fixas', attachments: [] },
+  { id: 6, date: '2026-03-08', type: 'expense', desc: 'Conta de Água e Esgoto (Corsan/Sabesp)', amount: 320.60, category: 'Contas Fixas', attachments: [] },
   { id: 7, date: '2026-03-12', type: 'expense', desc: 'Manutenção Preventiva Portão Eletrônico e Interfone', amount: 280.00, category: 'Manutenção', attachments: [] },
   { id: 8, date: '2026-03-15', type: 'expense', desc: 'Produtos de Limpeza e Jardinagem', amount: 95.50, category: 'Serviços', attachments: [] },
+
+  // 2026 - Fevereiro
   { id: 9, date: '2026-02-01', type: 'income', desc: 'Cota Condominial - Casa 101 (Fevereiro/2026)', amount: 450.00, category: 'Taxa Condominial', attachments: [] },
   { id: 10, date: '2026-02-01', type: 'income', desc: 'Cota Condominial - Casa 102 (Fevereiro/2026)', amount: 450.00, category: 'Taxa Condominial', attachments: [] },
   { id: 11, date: '2026-02-01', type: 'income', desc: 'Cota Condominial - Casa 103 (Fevereiro/2026)', amount: 450.00, category: 'Taxa Condominial', attachments: [] },
-  { id: 12, date: '2026-02-10', type: 'expense', desc: 'Serviço de Roçagem e Paisagismo', amount: 200.00, category: 'Manutenção', attachments: [] },
+  { id: 12, date: '2026-02-02', type: 'income', desc: 'Fundo de Reserva - Rateio 03 Casas (Fevereiro/2026)', amount: 150.00, category: 'Fundo de Reserva', attachments: [] },
+  { id: 13, date: '2026-02-05', type: 'expense', desc: 'Conta de Energia Elétrica', amount: 178.90, category: 'Contas Fixas', attachments: [] },
+  { id: 14, date: '2026-02-08', type: 'expense', desc: 'Conta de Água e Saneamento', amount: 295.40, category: 'Contas Fixas', attachments: [] },
+  { id: 15, date: '2026-02-10', type: 'expense', desc: 'Serviço de Roçagem e Paisagismo', amount: 200.00, category: 'Manutenção', attachments: [] },
+
+  // 2026 - Janeiro
+  { id: 16, date: '2026-01-02', type: 'income', desc: 'Cota Condominial - Casa 101 (Janeiro/2026)', amount: 450.00, category: 'Taxa Condominial', attachments: [] },
+  { id: 17, date: '2026-01-02', type: 'income', desc: 'Cota Condominial - Casa 102 (Janeiro/2026)', amount: 450.00, category: 'Taxa Condominial', attachments: [] },
+  { id: 18, date: '2026-01-02', type: 'income', desc: 'Cota Condominial - Casa 103 (Janeiro/2026)', amount: 450.00, category: 'Taxa Condominial', attachments: [] },
+  { id: 19, date: '2026-01-05', type: 'expense', desc: 'Conta de Energia Elétrica', amount: 190.20, category: 'Contas Fixas', attachments: [] },
+  { id: 20, date: '2026-01-08', type: 'expense', desc: 'Conta de Água e Esgoto', amount: 310.00, category: 'Contas Fixas', attachments: [] },
+
+  // --- HISTÓRICO ANO 2025 ---
+  // Dezembro/2025
+  { id: 101, date: '2025-12-01', type: 'income', desc: 'Cota Condominial - Casa 101 (Dezembro/2025)', amount: 450.00, category: 'Taxa Condominial', attachments: [] },
+  { id: 102, date: '2025-12-01', type: 'income', desc: 'Cota Condominial - Casa 102 (Dezembro/2025)', amount: 450.00, category: 'Taxa Condominial', attachments: [] },
+  { id: 103, date: '2025-12-01', type: 'income', desc: 'Cota Condominial - Casa 103 (Dezembro/2025)', amount: 450.00, category: 'Taxa Condominial', attachments: [] },
+  { id: 104, date: '2025-12-02', type: 'income', desc: 'Fundo de Reserva - Rateio 03 Casas', amount: 150.00, category: 'Fundo de Reserva', attachments: [] },
+  { id: 105, date: '2025-12-05', type: 'expense', desc: 'Conta de Luz / Energia Áreas Comuns', amount: 172.50, category: 'Contas Fixas', attachments: [] },
+  { id: 106, date: '2025-12-08', type: 'expense', desc: 'Conta de Água e Esgoto', amount: 285.00, category: 'Contas Fixas', attachments: [] },
+  { id: 107, date: '2025-12-18', type: 'expense', desc: 'Revisão das Lâmpadas e Iluminação de Natal', amount: 120.00, category: 'Manutenção', attachments: [] },
+
+  // Novembro/2025
+  { id: 108, date: '2025-11-01', type: 'income', desc: 'Cota Condominial - Casa 101 (Novembro/2025)', amount: 450.00, category: 'Taxa Condominial', attachments: [] },
+  { id: 109, date: '2025-11-01', type: 'income', desc: 'Cota Condominial - Casa 102 (Novembro/2025)', amount: 450.00, category: 'Taxa Condominial', attachments: [] },
+  { id: 110, date: '2025-11-01', type: 'income', desc: 'Cota Condominial - Casa 103 (Novembro/2025)', amount: 450.00, category: 'Taxa Condominial', attachments: [] },
+  { id: 111, date: '2025-11-05', type: 'expense', desc: 'Conta de Energia Elétrica', amount: 168.30, category: 'Contas Fixas', attachments: [] },
+  { id: 112, date: '2025-11-08', type: 'expense', desc: 'Conta de Água e Esgoto', amount: 290.40, category: 'Contas Fixas', attachments: [] },
+  { id: 113, date: '2025-11-20', type: 'expense', desc: 'Corte de Grama e Limpeza Externa', amount: 180.00, category: 'Manutenção', attachments: [] },
+
+  // Outubro/2025
+  { id: 114, date: '2025-10-01', type: 'income', desc: 'Cota Condominial - Casa 101 (Outubro/2025)', amount: 450.00, category: 'Taxa Condominial', attachments: [] },
+  { id: 115, date: '2025-10-01', type: 'income', desc: 'Cota Condominial - Casa 102 (Outubro/2025)', amount: 450.00, category: 'Taxa Condominial', attachments: [] },
+  { id: 116, date: '2025-10-01', type: 'income', desc: 'Cota Condominial - Casa 103 (Outubro/2025)', amount: 450.00, category: 'Taxa Condominial', attachments: [] },
+  { id: 117, date: '2025-10-05', type: 'expense', desc: 'Conta de Luz', amount: 160.00, category: 'Contas Fixas', attachments: [] },
+  { id: 118, date: '2025-10-08', type: 'expense', desc: 'Conta de Água', amount: 275.50, category: 'Contas Fixas', attachments: [] },
+  { id: 119, date: '2025-10-15', type: 'expense', desc: 'Troca de Sensor e Botoeira Portão', amount: 210.00, category: 'Manutenção', attachments: [] },
+
+  // Setembro/2025
+  { id: 120, date: '2025-09-01', type: 'income', desc: 'Cota Condominial - Casa 101 (Setembro/2025)', amount: 450.00, category: 'Taxa Condominial', attachments: [] },
+  { id: 121, date: '2025-09-01', type: 'income', desc: 'Cota Condominial - Casa 102 (Setembro/2025)', amount: 450.00, category: 'Taxa Condominial', attachments: [] },
+  { id: 122, date: '2025-09-01', type: 'income', desc: 'Cota Condominial - Casa 103 (Setembro/2025)', amount: 450.00, category: 'Taxa Condominial', attachments: [] },
+  { id: 123, date: '2025-09-05', type: 'expense', desc: 'Conta de Energia Elétrica', amount: 155.80, category: 'Contas Fixas', attachments: [] },
+  { id: 124, date: '2025-09-08', type: 'expense', desc: 'Conta de Água', amount: 260.00, category: 'Contas Fixas', attachments: [] },
+
+  // Agosto/2025
+  { id: 125, date: '2025-08-01', type: 'income', desc: 'Cota Condominial - Casa 101 (Agosto/2025)', amount: 450.00, category: 'Taxa Condominial', attachments: [] },
+  { id: 126, date: '2025-08-01', type: 'income', desc: 'Cota Condominial - Casa 102 (Agosto/2025)', amount: 450.00, category: 'Taxa Condominial', attachments: [] },
+  { id: 127, date: '2025-08-01', type: 'income', desc: 'Cota Condominial - Casa 103 (Agosto/2025)', amount: 450.00, category: 'Taxa Condominial', attachments: [] },
+  { id: 128, date: '2025-08-05', type: 'expense', desc: 'Conta de Luz', amount: 165.20, category: 'Contas Fixas', attachments: [] },
+  { id: 129, date: '2025-08-08', type: 'expense', desc: 'Conta de Água', amount: 270.30, category: 'Contas Fixas', attachments: [] },
+
+  // Julho/2025
+  { id: 130, date: '2025-07-01', type: 'income', desc: 'Cota Condominial - Casa 101 (Julho/2025)', amount: 450.00, category: 'Taxa Condominial', attachments: [] },
+  { id: 131, date: '2025-07-01', type: 'income', desc: 'Cota Condominial - Casa 102 (Julho/2025)', amount: 450.00, category: 'Taxa Condominial', attachments: [] },
+  { id: 132, date: '2025-07-01', type: 'income', desc: 'Cota Condominial - Casa 103 (Julho/2025)', amount: 450.00, category: 'Taxa Condominial', attachments: [] },
+  { id: 133, date: '2025-07-05', type: 'expense', desc: 'Conta de Energia Elétrica', amount: 158.00, category: 'Contas Fixas', attachments: [] },
+  { id: 134, date: '2025-07-08', type: 'expense', desc: 'Conta de Água', amount: 265.00, category: 'Contas Fixas', attachments: [] }
 ];
 
 const INITIAL_RESIDENTS: Resident[] = [
@@ -160,19 +220,32 @@ function setLocal<T>(key: string, val: T): void {
 export const api = {
   transactions: {
     getAll: async (): Promise<Transaction[]> => {
+      const normalize = (items: Transaction[]) =>
+        items.map(t => t.category === 'Utilidades' ? { ...t, category: 'Contas Fixas' } : t);
+
       try {
         const { data, error } = await supabase
           .from('transactions')
           .select('*')
           .order('date', { ascending: false });
         if (!error && data && data.length > 0) {
-          setLocal('transactions', data);
-          return data;
+          // Garante que os registros existentes e do Supabase contenham o histórico completo
+          const normalizedData = normalize(data);
+          const existingIds = new Set(normalizedData.map((t: any) => t.id));
+          const merged = [...normalizedData, ...INITIAL_TRANSACTIONS.filter(t => !existingIds.has(t.id))];
+          setLocal('transactions', merged);
+          return merged;
         }
       } catch (e) {
         console.warn("Supabase offline/unreachable, using local cache:", e);
       }
-      return getLocal('transactions', INITIAL_TRANSACTIONS);
+      
+      const local = getLocal<Transaction[]>('transactions', INITIAL_TRANSACTIONS);
+      const normalizedLocal = normalize(local);
+      const existingIds = new Set(normalizedLocal.map(t => t.id));
+      const merged = [...normalizedLocal, ...INITIAL_TRANSACTIONS.filter(t => !existingIds.has(t.id))];
+      setLocal('transactions', merged);
+      return merged;
     },
     create: async (data: Omit<Transaction, 'id'>): Promise<Transaction> => {
       const newTransaction: Transaction = {

@@ -66,7 +66,7 @@ export const generateFinancialReport = async (transactions: Transaction[], perio
 
 ### 🔍 Destaques e Principais Categorias
 1. **Arrecadação de Cotas:** ${transactions.filter(t => t.type === 'income').length} lançamentos de receitas identificados.
-2. **Despesas de Utilidades:** Contas de água e energia elétrica compõem os custos fixos essenciais do período.
+2. **Despesas de Contas Fixas:** Contas de água e energia elétrica compõem os custos fixos essenciais do período.
 3. **Reserva Financeira:** O saldo acumulado reflete a disciplina dos pagamentos das cotas ordinárias e fundo de investimento.
 
 ---

@@ -25,6 +25,7 @@ export const TransactionManager: React.FC<TransactionManagerProps> = ({ transact
   const [deleteId, setDeleteId] = useState<number | null>(null);
   const [filterText, setFilterText] = useState('');
   const [filterMonth, setFilterMonth] = useState('');
+  const [filterYear, setFilterYear] = useState('');
   const [filterCategory, setFilterCategory] = useState('');
   
   const [form, setForm] = useState(INITIAL_FORM_STATE);
@@ -41,13 +42,19 @@ export const TransactionManager: React.FC<TransactionManagerProps> = ({ transact
     return Array.from(cats).sort();
   }, [transactions]);
 
+  const availableYears = useMemo(() => {
+    const years = new Set(transactions.map(t => t.date.slice(0, 4)));
+    return Array.from(years).sort().reverse();
+  }, [transactions]);
+
   const filtered = transactions
     .filter(t => {
       const matchText = t.desc.toLowerCase().includes(filterText.toLowerCase()) || 
                         t.category.toLowerCase().includes(filterText.toLowerCase());
       const matchMonth = filterMonth ? t.date.startsWith(filterMonth) : true;
+      const matchYear = filterYear ? t.date.startsWith(filterYear) : true;
       const matchCategory = filterCategory ? t.category === filterCategory : true;
-      return matchText && matchMonth && matchCategory;
+      return matchText && matchMonth && matchYear && matchCategory;
     })
     .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 
@@ -167,10 +174,11 @@ export const TransactionManager: React.FC<TransactionManagerProps> = ({ transact
   const clearFilters = () => {
     setFilterText('');
     setFilterMonth('');
+    setFilterYear('');
     setFilterCategory('');
   };
 
-  const hasActiveFilters = filterText || filterMonth || filterCategory;
+  const hasActiveFilters = filterText || filterMonth || filterYear || filterCategory;
 
   return (
     <div className="bg-white rounded-xl shadow-sm border border-slate-100 flex flex-col h-[calc(100vh-140px)]">
@@ -195,7 +203,26 @@ export const TransactionManager: React.FC<TransactionManagerProps> = ({ transact
         
         <div className="flex flex-col sm:flex-row flex-wrap items-center gap-3 w-full xl:w-auto">
           
-          {/* Filtros... (Mantidos iguais) */}
+          {/* Filtro por Ano */}
+          <div className="w-full sm:w-auto">
+            <select
+              value={filterYear}
+              onChange={(e) => {
+                setFilterYear(e.target.value);
+                if (e.target.value && filterMonth && !filterMonth.startsWith(e.target.value)) {
+                  setFilterMonth('');
+                }
+              }}
+              className="w-full sm:w-28 px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 text-slate-600 font-medium"
+            >
+              <option value="">Todos Anos</option>
+              {availableYears.map(yr => (
+                <option key={yr} value={yr}>{yr}</option>
+              ))}
+            </select>
+          </div>
+
+          {/* Filtro por Mês */}
           <div className="w-full sm:w-auto">
             <input 
               type="month" 
@@ -400,7 +427,6 @@ export const TransactionManager: React.FC<TransactionManagerProps> = ({ transact
                     <option value="Fundo de Investimento" />
                     <option value="Manutenção" />
                     <option value="Contas Fixas" />
-                    <option value="Utilidades" />
                     <option value="Serviços" />
                     <option value="Outros" />
                   </datalist>
