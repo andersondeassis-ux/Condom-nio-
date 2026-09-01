@@ -1,0 +1,8 @@
+{
+  "name": "CondoManager Pro",
+  "description": "Painel de gestão condominial abrangente para síndicos e administradores com fluxo de caixa, controle de inadimplência, avisos, orçamentos, encomendas e IA.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
