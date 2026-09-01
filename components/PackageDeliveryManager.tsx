@@ -8,6 +8,7 @@ export const PackageDeliveryManager: React.FC = () => {
   const [residents, setResidents] = useState<Resident[]>([]);
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [deletePackageId, setDeletePackageId] = useState<number | null>(null);
   const [search, setSearch] = useState('');
   const [filterStatus, setFilterStatus] = useState<'all' | 'waiting' | 'delivered'>('all');
 
@@ -50,7 +51,7 @@ export const PackageDeliveryManager: React.FC = () => {
     if (!unit || !recipient) return;
 
     try {
-      await api.packages.create({
+      const created = await api.packages.create({
         unit,
         recipient,
         carrier: carrier || 'Correios / Transportadora',
@@ -59,12 +60,12 @@ export const PackageDeliveryManager: React.FC = () => {
         status: 'waiting'
       });
 
+      setDeliveries(prev => [created, ...prev]);
       setUnit('');
       setRecipient('');
       setCarrier('');
       setTrackingCode('');
       setIsModalOpen(false);
-      await loadData();
     } catch (err) {
       console.error('Erro ao registrar encomenda:', err);
     }
@@ -72,18 +73,20 @@ export const PackageDeliveryManager: React.FC = () => {
 
   const handleMarkDelivered = async (id: number) => {
     try {
-      await api.packages.markDelivered(id);
-      await loadData();
+      const updated = await api.packages.markDelivered(id);
+      setDeliveries(prev => prev.map(p => p.id === id ? updated : p));
     } catch (err) {
       console.error('Erro ao dar baixa na encomenda:', err);
     }
   };
 
-  const handleDelete = async (id: number) => {
-    if (!window.confirm('Deseja excluir este registro de encomenda?')) return;
+  const confirmDeletePackage = async () => {
+    if (!deletePackageId) return;
+    const idToDelete = deletePackageId;
+    setDeletePackageId(null);
     try {
-      await api.packages.delete(id);
-      await loadData();
+      await api.packages.delete(idToDelete);
+      setDeliveries(prev => prev.filter(p => p.id !== idToDelete));
     } catch (err) {
       console.error('Erro ao excluir encomenda:', err);
     }
@@ -218,8 +221,8 @@ export const PackageDeliveryManager: React.FC = () => {
                       </span>
                     )}
                     <button
-                      onClick={() => handleDelete(pkg.id)}
-                      className="text-slate-400 hover:text-rose-600 p-1 transition-colors"
+                      onClick={() => setDeletePackageId(pkg.id)}
+                      className="text-slate-400 hover:text-rose-600 hover:bg-rose-50 p-1.5 rounded-lg transition-colors cursor-pointer"
                       title="Excluir registro"
                     >
                       <Trash2 className="w-3.5 h-3.5" />
@@ -250,7 +253,7 @@ export const PackageDeliveryManager: React.FC = () => {
                 {pkg.status === 'waiting' && (
                   <button
                     onClick={() => handleMarkDelivered(pkg.id)}
-                    className="inline-flex items-center gap-1 text-xs font-semibold bg-emerald-600 hover:bg-emerald-700 text-white px-2.5 py-1.5 rounded-lg shadow-sm transition-colors"
+                    className="inline-flex items-center gap-1 text-xs font-semibold bg-emerald-600 hover:bg-emerald-700 text-white px-2.5 py-1.5 rounded-lg shadow-sm transition-colors cursor-pointer"
                   >
                     <UserCheck className="w-3.5 h-3.5" />
                     Dar Baixa
@@ -259,6 +262,44 @@ export const PackageDeliveryManager: React.FC = () => {
               </div>
             </div>
           ))}
+        </div>
+      )}
+
+      {/* Modal de Confirmação de Exclusão */}
+      {deletePackageId !== null && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-in fade-in duration-200">
+          <div className="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-100">
+            <div className="flex items-center gap-3 text-rose-600 mb-4">
+              <div className="p-3 bg-rose-50 rounded-xl">
+                <Trash2 className="w-6 h-6" />
+              </div>
+              <div>
+                <h3 className="text-lg font-bold text-slate-900">Excluir Encomenda</h3>
+                <p className="text-xs text-slate-500">Esta ação não poderá ser desfeita.</p>
+              </div>
+            </div>
+            
+            <p className="text-sm text-slate-600 mb-6">
+              Tem certeza que deseja remover este registro de encomenda da portaria?
+            </p>
+
+            <div className="flex justify-end gap-3">
+              <button
+                type="button"
+                onClick={() => setDeletePackageId(null)}
+                className="px-4 py-2 text-sm font-medium text-slate-600 hover:bg-slate-100 rounded-lg transition-colors cursor-pointer"
+              >
+                Cancelar
+              </button>
+              <button
+                type="button"
+                onClick={confirmDeletePackage}
+                className="px-4 py-2 text-sm font-semibold text-white bg-rose-600 hover:bg-rose-700 rounded-lg shadow-sm transition-colors cursor-pointer"
+              >
+                Sim, Excluir
+              </button>
+            </div>
+          </div>
         </div>
       )}
 

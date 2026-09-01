@@ -446,6 +446,17 @@ export const api = {
       setLocal('proposals', [...current, newProp]);
       return newProp;
     },
+    update: async (id: number, data: Partial<BudgetProposal>): Promise<BudgetProposal> => {
+      const current = getLocal<BudgetProposal[]>('proposals', INITIAL_PROPOSALS);
+      const updated = current.map(p => p.id === id ? { ...p, ...data } : p);
+      setLocal('proposals', updated);
+      try {
+        await supabase.from('budget_proposals').update(data).eq('id', id);
+      } catch (err) {
+        console.warn("Supabase proposals update fallback:", err);
+      }
+      return updated.find(p => p.id === id) as BudgetProposal;
+    },
     vote: async (id: number, type: 'for' | 'against'): Promise<BudgetProposal> => {
       const current = getLocal<BudgetProposal[]>('proposals', INITIAL_PROPOSALS);
       const updated = current.map(p => {
@@ -481,6 +492,11 @@ export const api = {
       return updated.find(p => p.id === id) as BudgetProposal;
     },
     delete: async (id: number): Promise<{ success: boolean }> => {
+      try {
+        await supabase.from('budget_proposals').delete().eq('id', id);
+      } catch (err) {
+        console.warn("Proposals delete fallback:", err);
+      }
       const current = getLocal<BudgetProposal[]>('proposals', INITIAL_PROPOSALS);
       setLocal('proposals', current.filter(p => p.id !== id));
       return { success: true };
@@ -500,17 +516,32 @@ export const api = {
       }
       return getLocal('ideas', INITIAL_IDEAS);
     },
-    create: async (data: Omit<ImprovementIdea, 'id'>): Promise<ImprovementIdea> => {
+    create: async (data: Omit<ImprovementIdea, 'id' | 'votes'> & { votes?: ImprovementIdea['votes'] }): Promise<ImprovementIdea> => {
       const newIdea: ImprovementIdea = {
+        votes: { low: 0, medium: 0, high: 0 },
         ...data,
         id: Date.now(),
-        votes: { low: 0, medium: 0, high: 0 }
       };
+      try {
+        const { data: res, error } = await supabase.from('improvement_ideas').insert([newIdea]).select().single();
+        if (!error && res) {
+          const current = getLocal<ImprovementIdea[]>('ideas', INITIAL_IDEAS);
+          setLocal('ideas', [res, ...current]);
+          return res;
+        }
+      } catch (err) {
+        console.warn("Ideas create fallback:", err);
+      }
       const current = getLocal<ImprovementIdea[]>('ideas', INITIAL_IDEAS);
       setLocal('ideas', [newIdea, ...current]);
       return newIdea;
     },
     delete: async (id: number): Promise<{ success: boolean }> => {
+      try {
+        await supabase.from('improvement_ideas').delete().eq('id', id);
+      } catch (err) {
+        console.warn("Ideas delete fallback:", err);
+      }
       const current = getLocal<ImprovementIdea[]>('ideas', INITIAL_IDEAS);
       setLocal('ideas', current.filter(i => i.id !== id));
       return { success: true };
@@ -531,21 +562,53 @@ export const api = {
         return i;
       });
       setLocal('ideas', updated);
+      try {
+        const item = updated.find(i => i.id === id);
+        if (item) {
+          await supabase.from('improvement_ideas').update({ votes: item.votes }).eq('id', id);
+        }
+      } catch (err) {
+        console.warn("Ideas vote fallback:", err);
+      }
       return updated.find(i => i.id === id) as ImprovementIdea;
     },
   },
 
   notices: {
     getAll: async (): Promise<Notice[]> => {
+      try {
+        const { data, error } = await supabase.from('notices').select('*').order('date', { ascending: false });
+        if (!error && data && data.length > 0) {
+          setLocal('notices', data);
+          return data;
+        }
+      } catch (err) {
+        console.warn("Supabase notices fallback:", err);
+      }
       return getLocal('notices', INITIAL_NOTICES);
     },
     create: async (data: Omit<Notice, 'id'>): Promise<Notice> => {
       const newNotice: Notice = { ...data, id: Date.now() };
+      try {
+        const { data: res, error } = await supabase.from('notices').insert([newNotice]).select().single();
+        if (!error && res) {
+          const current = getLocal<Notice[]>('notices', INITIAL_NOTICES);
+          setLocal('notices', [res, ...current]);
+          return res;
+        }
+      } catch (err) {
+        console.warn("Notice create fallback:", err);
+      }
       const current = getLocal<Notice[]>('notices', INITIAL_NOTICES);
       setLocal('notices', [newNotice, ...current]);
       return newNotice;
     },
     delete: async (id: number): Promise<{ success: boolean }> => {
+      try {
+        await supabase.from('notices').delete().eq('id', id);
+      } catch (err) {
+        console.warn("Notice delete fallback:", err);
+      }
       const current = getLocal<Notice[]>('notices', INITIAL_NOTICES);
       setLocal('notices', current.filter(n => n.id !== id));
       return { success: true };
@@ -577,25 +640,55 @@ export const api = {
 
   packages: {
     getAll: async (): Promise<PackageDelivery[]> => {
+      try {
+        const { data, error } = await supabase.from('package_deliveries').select('*').order('id', { ascending: false });
+        if (!error && data && data.length > 0) {
+          setLocal('packages', data);
+          return data;
+        }
+      } catch (err) {
+        console.warn("Supabase packages fallback:", err);
+      }
       return getLocal('packages', INITIAL_PACKAGES);
     },
     create: async (data: Omit<PackageDelivery, 'id'>): Promise<PackageDelivery> => {
       const newPkg: PackageDelivery = { ...data, id: Date.now() };
+      try {
+        const { data: res, error } = await supabase.from('package_deliveries').insert([newPkg]).select().single();
+        if (!error && res) {
+          const current = getLocal<PackageDelivery[]>('packages', INITIAL_PACKAGES);
+          setLocal('packages', [res, ...current]);
+          return res;
+        }
+      } catch (err) {
+        console.warn("Package create fallback:", err);
+      }
       const current = getLocal<PackageDelivery[]>('packages', INITIAL_PACKAGES);
       setLocal('packages', [newPkg, ...current]);
       return newPkg;
     },
     markDelivered: async (id: number): Promise<PackageDelivery> => {
       const current = getLocal<PackageDelivery[]>('packages', INITIAL_PACKAGES);
+      const pickedUp = new Date().toLocaleString('pt-BR');
       const updated = current.map(p => p.id === id ? { 
         ...p, 
         status: 'delivered' as const, 
-        pickedUpDate: new Date().toLocaleString('pt-BR') 
+        pickedUpDate: pickedUp 
       } : p);
       setLocal('packages', updated);
+      try {
+        await supabase.from('package_deliveries').update({ status: 'delivered', pickedUpDate: pickedUp }).eq('id', id);
+      } catch (err) {
+        console.warn("Package mark delivered fallback:", err);
+      }
       return updated.find(p => p.id === id) as PackageDelivery;
     },
     delete: async (id: number): Promise<{ success: boolean }> => {
+      try {
+        await supabase.from('package_deliveries').delete().eq('id', id);
+      } catch (err) {
+        console.warn("Package delete fallback:", err);
+      }
       const current = getLocal<PackageDelivery[]>('packages', INITIAL_PACKAGES);
       setLocal('packages', current.filter(p => p.id !== id));
       return { success: true };

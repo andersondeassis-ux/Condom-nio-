@@ -12,6 +12,7 @@ export const NoticeManager: React.FC<NoticeManagerProps> = () => {
   const [notices, setNotices] = useState<Notice[]>([]);
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [deleteNoticeId, setDeleteNoticeId] = useState<number | null>(null);
   const [aiTopic, setAiTopic] = useState('');
   const [aiTone, setAiTone] = useState<'cordial' | 'firme' | 'urgente' | 'informativo'>('cordial');
   const [aiDetails, setAiDetails] = useState('');
@@ -64,7 +65,7 @@ export const NoticeManager: React.FC<NoticeManagerProps> = () => {
     if (!title.trim() || !content.trim()) return;
 
     try {
-      await api.notices.create({
+      const created = await api.notices.create({
         title,
         content,
         priority,
@@ -78,17 +79,19 @@ export const NoticeManager: React.FC<NoticeManagerProps> = () => {
       setAiTopic('');
       setAiDetails('');
       setIsModalOpen(false);
-      await loadNotices();
+      setNotices(prev => [created, ...prev]);
     } catch (err) {
       console.error('Erro ao criar comunicado:', err);
     }
   };
 
-  const handleDeleteNotice = async (id: number) => {
-    if (!window.confirm('Deseja realmente excluir este comunicado?')) return;
+  const confirmDeleteNotice = async () => {
+    if (!deleteNoticeId) return;
+    const idToDelete = deleteNoticeId;
+    setDeleteNoticeId(null);
     try {
-      await api.notices.delete(id);
-      await loadNotices();
+      await api.notices.delete(idToDelete);
+      setNotices(prev => prev.filter(n => n.id !== idToDelete));
     } catch (err) {
       console.error('Erro ao excluir comunicado:', err);
     }
@@ -155,8 +158,8 @@ export const NoticeManager: React.FC<NoticeManagerProps> = () => {
                     {getPriorityBadge(notice.priority)}
                   </div>
                   <button
-                    onClick={() => handleDeleteNotice(notice.id)}
-                    className="text-slate-400 hover:text-rose-600 transition-colors p-1"
+                    onClick={() => setDeleteNoticeId(notice.id)}
+                    className="text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors p-1.5 cursor-pointer"
                     title="Excluir comunicado"
                   >
                     <Trash2 className="w-4 h-4" />
@@ -174,6 +177,44 @@ export const NoticeManager: React.FC<NoticeManagerProps> = () => {
               </div>
             </div>
           ))}
+        </div>
+      )}
+
+      {/* Modal de Confirmação de Exclusão */}
+      {deleteNoticeId !== null && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-in fade-in duration-200">
+          <div className="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-100">
+            <div className="flex items-center gap-3 text-rose-600 mb-4">
+              <div className="p-3 bg-rose-50 rounded-xl">
+                <Trash2 className="w-6 h-6" />
+              </div>
+              <div>
+                <h3 className="text-lg font-bold text-slate-900">Excluir Comunicado</h3>
+                <p className="text-xs text-slate-500">Esta ação não poderá ser desfeita.</p>
+              </div>
+            </div>
+            
+            <p className="text-sm text-slate-600 mb-6">
+              Tem certeza que deseja remover este aviso do mural de comunicados?
+            </p>
+
+            <div className="flex justify-end gap-3">
+              <button
+                type="button"
+                onClick={() => setDeleteNoticeId(null)}
+                className="px-4 py-2 text-sm font-medium text-slate-600 hover:bg-slate-100 rounded-lg transition-colors cursor-pointer"
+              >
+                Cancelar
+              </button>
+              <button
+                type="button"
+                onClick={confirmDeleteNotice}
+                className="px-4 py-2 text-sm font-semibold text-white bg-rose-600 hover:bg-rose-700 rounded-lg shadow-sm transition-colors cursor-pointer"
+              >
+                Sim, Excluir
+              </button>
+            </div>
+          </div>
         </div>
       )}
 
